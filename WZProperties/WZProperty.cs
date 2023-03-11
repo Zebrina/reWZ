@@ -72,7 +72,7 @@ namespace reWZ.WZProperties {
 
     /// <summary>An abstract class representing a WZ property that contains a value of type <typeparamref name="T" /> .</summary>
     /// <typeparam name="T"> The type that this property contains. </typeparam>
-    public abstract class WZProperty<T> : WZObject {
+    public abstract class WZProperty<T> : WZObject, IWZProperty<T> {
         protected T _value;
 
         internal WZProperty(string name, WZObject parent, T value, WZImage container, bool children, WZObjectType type)
@@ -86,6 +86,10 @@ namespace reWZ.WZProperties {
 
         /// <summary>The image that this property resides in.</summary>
         public WZImage Image { get; }
+    }
+
+    public interface IWZProperty<T> {
+        T Value { get; }
     }
 
     internal static class WZExtendedParser {

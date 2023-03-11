@@ -83,7 +83,7 @@ namespace reWZ.WZProperties {
                     //throw new WZException($"Failed to parse WAVEFORMATEX header at node {Path}");
                 }
             } else if (fmt != NoHeaderGuid) {
-                Debug.WriteLine("New format guid {0} @ {1}", fmt, Path);
+                Debug.WriteLine("New format guid {0} @ {1}", fmt, ConstructPath());
             }
 
             if (!initial || (File._flag & WZReadSelection.EagerParseAudio) == WZReadSelection.EagerParseAudio) {

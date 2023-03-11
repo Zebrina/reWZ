@@ -57,9 +57,6 @@ namespace reWZ.WZProperties {
         /// <summary>The parent of this WZ object, or <code>null</code> if this is the main WZ directory.</summary>
         public WZObject Parent { get; }
 
-        /// <summary>The absolute path to this object.</summary>
-        public string Path => ConstructPath();
-
         /// <summary>The WZ file containing this object.</summary>
         public WZFile File { get; }
 
@@ -88,24 +85,39 @@ namespace reWZ.WZProperties {
             return _canContainChildren && _backing.Contains(name);
         }
 
-        /// <summary>Tries to cast this to a <see cref="WZProperty{T}" /> and returns its value, or throws an exception if the cast
+        public WZObject GetChild(string name) {
+            if (_canContainChildren && _backing.TryGetItem(name, out WZObject child)) {
+                return child;
+            }
+            return null;
+        }
+
+        public bool TryGetChild(string name, out WZObject child) {
+            if (_canContainChildren) {
+                return _backing.TryGetItem(name, out child);
+            }
+            child = null;
+            return false;
+        }
+
+        /// <summary>Tries to cast this to a <see cref="IWZProperty{T}" /> and returns its value, or throws an exception if the cast
         ///     is invalid.</summary>
         /// <typeparam name="T"> The type of the value to return. </typeparam>
         /// <exception cref="System.InvalidCastException">This WZ object is not a
-        ///     <see cref="WZProperty{T}" />
+        ///     <see cref="IWZProperty{T}" />
         ///     .</exception>
         /// <returns> The value enclosed by this WZ property. </returns>
         public T ValueOrDie<T>() {
-            return ((WZProperty<T>) this).Value;
+            return ((IWZProperty<T>) this).Value;
         }
 
-        /// <summary>Tries to cast this to a <see cref="WZProperty{T}" /> and returns its value, or returns a default value if the
+        /// <summary>Tries to cast this to a <see cref="IWZProperty{T}" /> and returns its value, or returns a default value if the
         ///     cast is invalid.</summary>
         /// <param name="default"> The value to return if the cast is unsuccessful. </param>
         /// <typeparam name="T"> The type of the value to return. </typeparam>
         /// <returns> The value enclosed by this WZ property, or the default value. </returns>
-        public T ValueOrDefault<T>(T @default) {
-            WZProperty<T> ret = this as WZProperty<T>;
+        public T ValueOrDefault<T>(T @default = default) {
+            IWZProperty<T> ret = this as IWZProperty<T>;
             return ret != null ? ret.Value : @default;
         }
 
@@ -126,13 +138,13 @@ namespace reWZ.WZProperties {
             _backing.Add(o);
         }
 
-        private string ConstructPath() {
+        public string ConstructPath() {
             StringBuilder s = new StringBuilder(Name);
             WZObject p = this;
             while ((p = p.Parent) != null) {
                 s.Insert(0, "/").Insert(0, p.Name);
             }
-            return string.Intern(s.ToString());
+            return s.ToString();
         }
 
         #region Nested type: ChildCollection
@@ -142,6 +154,11 @@ namespace reWZ.WZProperties {
 
             protected override string GetKeyForItem(WZObject item) {
                 return item.Name;
+            }
+
+            internal bool TryGetItem(string key, out WZObject item) {
+                item = null;
+                return Dictionary?.TryGetValue(key, out item) ?? false;
             }
         }
 
