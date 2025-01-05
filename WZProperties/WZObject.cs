@@ -157,8 +157,19 @@ namespace reWZ.WZProperties {
             }
 
             internal bool TryGetItem(string key, out WZObject item) {
+                if (Dictionary != null) {
+                    return Dictionary.TryGetValue(key, out item);
+                }
+
+                foreach (WZObject child in Items) {
+                    if (GetKeyForItem(child) == key) {
+                        item = child;
+                        return true;
+                    }
+                }
+
                 item = null;
-                return Dictionary?.TryGetValue(key, out item) ?? false;
+                return false;
             }
         }
 

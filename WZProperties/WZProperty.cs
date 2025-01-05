@@ -58,6 +58,20 @@ namespace reWZ.WZProperties {
             }
         }
 
+        public override WZObject GetChild(string name) {
+            if (!_parsed) {
+                CheckParsed();
+            }
+            return base.GetChild(name);
+        }
+
+        public override bool TryGetChild(string name, out WZObject child) {
+            if (!_parsed) {
+                CheckParsed();
+            }
+            return base.TryGetChild(name, out child);
+        }
+
         internal void CheckParsed() {
             if (_parsed) {
                 return;
