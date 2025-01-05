@@ -85,14 +85,14 @@ namespace reWZ.WZProperties {
             return _canContainChildren && _backing.Contains(name);
         }
 
-        public WZObject GetChild(string name) {
+        public virtual WZObject GetChild(string name) {
             if (_canContainChildren && _backing.TryGetItem(name, out WZObject child)) {
                 return child;
             }
             return null;
         }
 
-        public bool TryGetChild(string name, out WZObject child) {
+        public virtual bool TryGetChild(string name, out WZObject child) {
             if (_canContainChildren) {
                 return _backing.TryGetItem(name, out child);
             }

@@ -84,6 +84,20 @@ namespace reWZ.WZProperties {
             return base.HasChild(name);
         }
 
+        public override WZObject GetChild(string name) {
+            if (!_parsed) {
+                Parse();
+            }
+            return base.GetChild(name);
+        }
+
+        public override bool TryGetChild(string name, out WZObject child) {
+            if (!_parsed) {
+                Parse();
+            }
+            return base.TryGetChild(name, out child);
+        }
+
         public unsafe byte[] DumpBytes() {
             byte[] ret = new byte[_r.Length];
             ByteMarshal.CopyTo(_r.Pointer - _r.Position, ret, 0, _r.Length);
